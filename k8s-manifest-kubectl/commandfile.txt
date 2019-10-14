@@ -1,0 +1,23 @@
+az login
+
+az aks get-credentials --resource-group kubernetes-test --name kubernetes-demo
+
+kubectl get nodes
+
+kubectl apply -f helm-rbac.yaml
+
+kubectl create clusterrolebinding kubernetes-dashboard -n kube-system --clusterrole=cluster-admin --serviceaccount=kube-system:kubernetes-dashboard
+
+az aks browse --resource-group kubernetes-test  --name kubernetes-demo
+
+kubectl apply -f Container1-manifest
+kubectl apply -f Container2-manifest
+kubectl apply -f nginx-configuration
+kubectl apply -f ingress-controller.yaml
+
+
+helm install .\nginx-ingress\ --name my-nginx --set rbac.create=true --set controller.replicaCount=2 --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux --set controller.service.loadBalancerIP="23.100.25.7" 
+
+
+#openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt  -keyout aks-ingress-tls.key  -subj "/CN=demo-ingress.eastus.cloudapp.azure.com/O=aks-ingress-tls"
+helm install  --name cert-manager  --namespace cert-manager  --version v0.8.0  jetstack/cert-manager

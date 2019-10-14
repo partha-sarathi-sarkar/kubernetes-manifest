@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: demo-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    #Forcefully redirect to https
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - demo-ingress.eastus.cloudapp.azure.com
+    secretName: tls-secret
+  rules:
+  - host: demo-ingress.eastus.cloudapp.azure.com
+    http:
+      paths:
+      - backend:
+          serviceName: container1
+          servicePort: 80
+        path: /container1(/|$)(.*)
+      - backend:
+          serviceName: container2
+          servicePort: 80
+        path: /container2(/|$)(.*)
+      - backend:
+          serviceName: helloworld
+          servicePort: 80
+        path: /hello-world(/|$)(.*)
