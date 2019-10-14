@@ -1,0 +1,13 @@
+version: 2
+    jobs:
+      build:
+        environment:
+          CONTAINER_IMAGE_NAME: spartha1995/container-services
+        docker:
+          - image: circleci/buildpack-deps:stretch
+        steps:
+          - checkout
+          - setup_remote_docker
+          - run:
+              name: Build Docker image
+              command: docker build -t $CONTAINER_IMAGE_NAME:containerservice1 . -f Docker-Manifest/Cointainer1/Dockerfile
