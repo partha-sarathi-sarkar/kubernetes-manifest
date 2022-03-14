@@ -14,6 +14,8 @@ spec:
     spec:
       containers:
       - name: container1
-        image: spartha1995/container-services:containerservice1
+        image: defaultacrname.azurecr.io/container1:v1
         ports:
         - containerPort: 80
+      imagePullSecrets:
+        - name: acr-secret
